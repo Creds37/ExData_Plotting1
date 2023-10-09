@@ -1,0 +1,167 @@
+---
+title: "Course_Project1"
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-08-29"
+---
+
+```{r}
+
+file_path <- "household_power_consumption.txt"
+
+# Read data from the text file using read.table() (or other appropriate function)
+data <- read.table(file_path, header = TRUE, sep = (";"))
+
+head(data)
+
+```
+```{r}
+tail(data)
+```
+
+```{r}
+rows = c(66637:69516)
+data2 = data[rows, ]
+```
+
+```{r}
+#Set language of dates in English
+Sys.setlocale("LC_TIME", "English")
+```
+
+```{r}
+print(data2)
+```
+
+```{r}
+str(data2)
+```
+
+```{r}
+# Convert Date and Time to Date/Time classes
+data2 = strptime(paste(data$Date, data$Time), format = "%d/%m/%Y %H:%M:%S")
+```
+
+```{r}
+data2$Global_active_power <- as.numeric(data2$Global_active_power)
+```
+
+
+#plot 1
+```{r}
+#Loading specific dataset
+
+global <- read.table("household_power_consumption.txt", sep=";", header=TRUE)
+
+global$Date <- as.Date(global$Date, "%d/%m/%Y")
+globa2 <- global[global$Date == "2007-02-01" | global$Date == "2007-02-02", ]
+
+#Convert the needed column to numeric values
+globa2$Global_active_power <- as.numeric(globa2$Global_active_power)
+
+#Create histogram
+hist(globa2$Global_active_power, breaks=12, col = "red",
+     xlab="Global Active Power (kilowatts)", main =substitute(paste(bold('Global Active Power'))))
+```
+#plot 2
+
+```{r}
+#Loading dataset
+house <- read.table("household_power_consumption.txt", sep=";", header=TRUE)
+
+#Set language of dates in English
+Sys.setlocale("LC_TIME", "English")
+
+#Transform Date & Time column to date class and select values for wanted dates
+house$Date <- as.Date(house$Date, "%d/%m/%Y")
+house2 <- house[house$Date == "2007-02-01" | house$Date == "2007-02-02", ]
+time <- as.POSIXct(paste(house2$Date, house2$Time))
+house2$Time <- strptime(house2$Time, format="%H:%M:%S")
+
+
+#Convert the needed column to numeric values
+house2$Global_active_power <- as.numeric(house2$Global_active_power)
+```
+
+```{r}
+#Create line plot of time against Global active power
+plot(time, house2$Global_active_power, type="l", 
+     xlab = "", ylab="Global Active Power (kilowatts)")
+```
+#plotting Plot 3
+```{r}
+#Load dataset
+zero <- read.table("household_power_consumption.txt", sep=";", header=TRUE)
+
+#Set language of dates in English
+Sys.setlocale("LC_TIME", "English")
+
+#Transform Date & Time column to date class and select values for wanted dates
+zero$Date <- as.Date(zero$Date, "%d/%m/%Y")
+zero2<- zero[zero$Date == "2007-02-01" | zero$Date == "2007-02-02", ]
+time <- as.POSIXct(paste(zero2$Date, zero2$Time))
+zero2$Time <- strptime(zero2$Time, format="%H:%M:%S")
+```
+
+
+```{r}
+#Convert to numeric values
+zero2$Sub_metering_1 <- as.numeric(zero2$Sub_metering_1)
+zero2$Sub_metering_2 <- as.numeric(zero2$Sub_metering_2)
+
+#Create line plot of time against the energy sub metering values in different colors
+plot(time, zero2$Sub_metering_1, type="l", col="black",
+     xlab = "", ylab="Energy sub metering",)
+lines(time, zero2$Sub_metering_2, type="l", col="red")
+lines(time,zero2$Sub_metering_3, type="l", col="blue")
+legend("topright", legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
+                           col=c("black", "red", "blue"), lty=1, cex=0.8)
+```
+```{r}
+#Load dataset
+power <- read.table("household_power_consumption.txt", sep=";", header=TRUE)
+
+#Set language of dates in English
+Sys.setlocale("LC_TIME", "English")
+
+#Requested dates transformation
+power$Date <- as.Date(power$Date, "%d/%m/%Y")
+power_d <- power[power$Date == "2007-02-01" | power$Date == "2007-02-02", ]
+time <- as.POSIXct(paste(power_d$Date, power_d$Time))
+power_d$Time <- strptime(power_d$Time, format="%H:%M:%S")
+
+
+#Convert the needed columns to numeric values
+power_d$Sub_metering_1 <- as.numeric(power_d$Sub_metering_1)
+power_d$Sub_metering_2 <- as.numeric(power_d$Sub_metering_2)
+power_d$Global_active_power <- as.numeric(power_d$Global_active_power)
+power_d$Global_reactive_power <- as.numeric(power_d$Global_reactive_power)
+power_d$Voltage <- as.numeric(power_d$Voltage)
+
+#Create a setting of 2 by 2 to put the four plots 
+par(mfrow = c(2,2))
+
+#Create line plot of time against Global active power
+plot(time, power_d$Global_active_power, type="l", 
+     xlab = "", ylab="Global Active Power")
+
+#Create line plot of time against Voltage
+plot(time, power_d$Voltage, type="l", 
+     xlab = "datetime", ylab="Voltage")
+
+
+#Create line plot of time against the energy sub metering values in different colors
+plot(time, power_d$Sub_metering_1, type="l", col="black",
+     xlab = "", ylab="Energy sub metering",)
+lines(time, power_d$Sub_metering_2, type="l", col="red")
+lines(time, power_d$Sub_metering_3, type="l", col="blue")
+legend("topright", legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
+       col=c("black", "red", "blue"), lty=1, cex=0.75, box.lwd = 0, bty = "n")
+
+
+#Create line plot of time vs global reactive power
+plot(time, power_d$Global_reactive_power, type="l", 
+     xlab = "datetime", ylab="Global_reactive_power")
+```
+
